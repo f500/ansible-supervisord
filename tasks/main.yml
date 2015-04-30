@@ -1,0 +1,14 @@
+---
+
+- name: Install supervisord
+  apt: pkg=supervisor state=present
+
+- name: Create supervisord group
+  group: name=supervisord system=yes state=present
+
+- name: Create supervisord config
+  template: src=supervisord.conf.j2 dest=/etc/supervisor/supervisord.conf
+
+- name: Start supervisord
+  service: name=supervisor state=started enabled=yes
+
