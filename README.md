@@ -24,9 +24,23 @@ Role Variables
     supervisord_include_path: "/etc/supervisor/conf.d"
     supervisord_include_files: "{{ supervisord_include_path }}/*.conf"
 
+    supervisord_events: []
+    
+Events
+------
+
+Event example:
+
+    supervisord_events:
+      - name:    "mylistener"
+        command: "my_custom_listener.py"
+        events:
+          - "PROCESS_STATE"
+          - "TICK_60"
+
 
 Example Playbook
--------------------------
+----------------
 
     - hosts: servers
       roles:

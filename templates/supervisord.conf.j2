@@ -27,3 +27,9 @@ serverurl={{ supervisord_supervisorctl_serverurl }} ; use a unix:// URL  for a u
 
 [include]
 files = {{ supervisord_include_files }}
+
+{% for eventRecord in supervisord_events %}
+[eventlistener:{{ eventRecord.name }}]
+command={{ eventRecord.command }}
+events={{ eventRecord.events|join(",") }}
+{% endfor %}
