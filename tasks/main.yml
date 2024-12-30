@@ -1,29 +1,39 @@
 ---
-
 - name: Install supervisord
-  apt: pkg=supervisor state=present
+  ansible.builtin.apt:
+    pkg: supervisor
+    state: present
 
 - name: Create supervisord group
-  group: name=supervisord system=yes state=present
+  ansible.builtin.group:
+    name: supervisord
+    system: "yes"
+    state: present
 
 - name: Add the supervisor fatals events listener
-  copy: src=files/supervisor-fatals-listener.py mode=755 dest=/usr/local/bin/supervisor-fatals-listener.py
+  ansible.builtin.copy:
+    src: files/supervisor-fatals-listener.py
+    mode: "0755"
+    dest: /usr/local/bin/supervisor-fatals-listener.py
   when: supervisord_log_fatal_state_to_syslog
 
 - name: Configure the supervisor fatals events listener
-  template:
+  ansible.builtin.template:
     src: "files/supervisor.event.listeners.conf.j2"
     dest: "/etc/supervisor/conf.d/eventlisteners.conf"
+    mode: "0644"
   when: supervisord_log_fatal_state_to_syslog
 
 - name: Create supervisord config
-  template: src=supervisord.conf.j2 dest=/etc/supervisor/supervisord.conf
+  ansible.builtin.template:
+    src: supervisord.conf.j2
+    dest: /etc/supervisor/supervisord.conf
+    mode: "0644"
   register: supervisord_config_file
-
-- name: Restart supervisord if the config task has changes
-  service: name=supervisor state=restarted
-  when: supervisord_config_file.changed
+  notify: Restart supervisord
 
 - name: Start supervisord
-  service: name=supervisor state=started enabled=yes
-
+  ansible.builtin.service:
+    name: supervisor
+    state: started
+    enabled: "yes"

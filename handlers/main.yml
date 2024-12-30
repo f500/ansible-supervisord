@@ -1,8 +1,18 @@
 ---
-
 - name: Reload supervisord configuration
-  command: supervisorctl reread
+  ansible.builtin.command: "supervisorctl reread"
   notify: Apply supervisord changes
+  changed_when: false
+  tags:
+    - skip_ansible_lint
 
 - name: Apply supervisord changes
-  command: supervisorctl update
+  ansible.builtin.command: "supervisorctl update" # noqa
+  changed_when: false
+  tags:
+    - skip_ansible_lint
+
+- name: Restart supervisord
+  ansible.builtin.service:
+    name: supervisor
+    state: restarted
